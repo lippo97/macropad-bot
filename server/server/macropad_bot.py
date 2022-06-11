@@ -14,12 +14,13 @@ import clips
 
 
 class MacroPad(commands.Cog):
-    def __init__(self, bot, assets_path, ngrok_token, message_broker_url):
+    def __init__(self, bot, assets_path: str, ngrok_token: str, message_broker: Tuple[str, int]):
         self.bot = bot
         self._on_chat_leave = None
         self._assets_path = assets_path
         self._ngrok_token = ngrok_token
-        self._message_broker_url = message_broker_url
+        self._message_broker_hostname, self._message_broker_port = message_broker
+        self._message_broker_url = f'amqp://{self._message_broker_hostname}:{self._message_broker_port}'
 
     @commands.command()
     async def list(self, ctx):
@@ -57,7 +58,6 @@ class MacroPad(commands.Cog):
         await channel.connect()
 
         async def on_message(message):
-            print('receive message')
             async with message.process():
                 msg = message.body.decode('utf-8')
                 clip = clips.default(msg)
@@ -80,7 +80,7 @@ class MacroPad(commands.Cog):
             logging.info(f'Connection with message broker {self._message_broker_url} enstablished.')
 
             ngrok.set_auth_token(self._ngrok_token)
-            tunnel = ngrok.connect(5672, 'tcp')
+            tunnel = ngrok.connect(f'{self._message_broker_hostname}:{self._message_broker_port}', 'tcp')
             hostname, port = self._get_hostname_and_port(tunnel.public_url)
             logging.info(f'Tunnel with ngrok set up. Check out {tunnel.api_url}')
             await ctx.send('\n'.join([f'Message queue address: {tunnel.public_url}',
