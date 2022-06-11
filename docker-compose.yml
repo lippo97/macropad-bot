@@ -1,0 +1,7 @@
+version: "3.2"
+services:
+  broker:
+    image: rabbitmq:3
+    ports:
+      - 5672:5672
+      - 15692:15692

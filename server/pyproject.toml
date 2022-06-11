@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "server"
+version = "0.1.0"
+description = ""
+authors = ["Filippo <filippo.nardini@studio.unibo.it>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = {extras = ["voice"], version = "^1.7.3"}
+aio-pika = "^7.2.0"
+pyngrok = "^5.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
