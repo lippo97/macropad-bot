@@ -1,23 +1,27 @@
-import pika
+import os
 import logging
+import discord
+from discord.ext import commands
 
+from macropad_bot import MacroPad
 
-def create_connection():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
+ASSETS_PATH = 'assets'
+LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
+DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
+NGROK_TOKEN = os.environ.get('NGROK_TOKEN')
+MESSAGE_BROKER = os.environ.get('MESSAGE_BROKER', 'localhost')
+if DISCORD_TOKEN is None:
+    raise RuntimeError('DISCORD_TOKEN should be defined.')
 
-    channel.queue_declare(queue='default')
+logging.basicConfig(level=LOGLEVEL)
 
-    def callback(ch, method, properties, body):
-        msg = body.decode('utf-8')
-        print('received {}'.format(msg))
+intents = discord.Intents.default()
+intents.members = True
 
-    channel.basic_consume(queue='default', on_message_callback=callback, auto_ack=True)
-    channel.start_consuming()
-    logging.info('Channel start consuming messages.')
-
-def main():
-    create_connection()
-
-if __name__ == '__main__':
-    main()
+bot = commands.Bot(command_prefix='>', intents=intents)
+bot.add_cog(MacroPad(bot,
+                     assets_path=ASSETS_PATH,
+                     ngrok_token=NGROK_TOKEN,
+                     message_broker_url=MESSAGE_BROKER
+                     ))
+bot.run(DISCORD_TOKEN)

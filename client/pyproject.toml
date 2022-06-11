@@ -8,6 +8,7 @@ authors = ["Filippo <filippo.nardini@studio.unibo.it>"]
 python = "^3.10"
 pynput = "^1.7.6"
 pika = "^1.2.1"
+typer = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

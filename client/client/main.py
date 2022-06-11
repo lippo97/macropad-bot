@@ -1,17 +1,18 @@
-from pynput import keyboard
-from pynput.keyboard import Key
+import sys
 import pika
 import os
 import logging
+import typer
 
-MESSAGE_BROKER = os.environ.get('MESSAGE_BROKER', 'localhost')
+from pynput import keyboard
+from pynput.keyboard import Key
+
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
-def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(MESSAGE_BROKER))
+def main(hostname: str, port: int):
+    connection = pika.BlockingConnection(pika.ConnectionParameters(hostname, port))
     channel = connection.channel()
-    # channel.queue_declare(queue='default')
     channel.exchange_declare(exchange='default',
                              exchange_type='fanout')
     def send_msg(msg):
@@ -30,7 +31,7 @@ def main():
         elif key == Key.f11:
             send_msg('command/3')
 
-    logging.info('Client listening for keys.')
+    print('Client listening for keys.')
     try:
         with keyboard.Listener(on_press=on_press) as listener:
             listener.join()
@@ -40,4 +41,4 @@ def main():
         print('Done.')
 
 if __name__ == '__main__':
-    main()
+    typer.run(main)
