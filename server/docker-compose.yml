@@ -2,10 +2,8 @@ version: "3.2"
 services:
   macropad:
     build: .
-    environment:
-      - DISCORD_TOKEN=OTc0MzUxOTE2ODExMjkyNzM5.GaFX1U.Fc-La42Eu-lnSKsUsbizMnchLlEkobs0SUmyP0
-      - NGROK_TOKEN=2AQYFEyqGQ1fOU5EiiCqBNBpmN6_7wzvJZd6zL3CcPoFUdXZB
-      - MESSAGE_BROKER_HOSTNAME=localost
-      - MESSAGE_BROKER_PORT=5672
+    env_file:
+      - .env
+      - tokens.env
     network_mode: host
     restart: unless-stopped
