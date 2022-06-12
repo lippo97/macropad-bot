@@ -17,6 +17,9 @@ def main(hostname: str, port: int):
                              exchange_type='fanout')
     def send_msg(msg):
         logging.info(f'Sending message: {msg}')
+        channel = connection.channel()
+        channel.exchange_declare(exchange='default',
+                                exchange_type='fanout')
         channel.basic_publish(exchange='default',
                               routing_key='',
                               body=msg)
