@@ -83,8 +83,7 @@ class MacroPad(commands.Cog):
             tunnel = ngrok.connect(f'{self._message_broker_hostname}:{self._message_broker_port}', 'tcp')
             hostname, port = self._get_hostname_and_port(tunnel.public_url)
             logging.info(f'Tunnel with ngrok set up. Check out {tunnel.api_url}')
-            await ctx.send('\n'.join([f'Message queue address: {tunnel.public_url}',
-                                      f'Run `python.exe client {hostname} {port}`']))
+            await ctx.send(f'To connect run `macropad-client.exe {hostname} {port}`')
             await asyncio.Future()
 
     @commands.command()
