@@ -11,15 +11,16 @@ LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
 
 def main(hostname: str, port: int):
-    connection = pika.BlockingConnection(pika.ConnectionParameters(hostname, port))
     def send_msg(msg):
         logging.info(f'Sending message: {msg}')
+        connection = pika.BlockingConnection(pika.ConnectionParameters(hostname, port))
         channel = connection.channel()
         channel.exchange_declare(exchange='default',
                                 exchange_type='fanout')
         channel.basic_publish(exchange='default',
                               routing_key='',
                               body=msg)
+        connection.close()
 
     def on_press(key):
         if key == Key.f8:
@@ -37,7 +38,6 @@ def main(hostname: str, port: int):
             listener.join()
     except KeyboardInterrupt:
         print('Ctrl-C detected, attempting to close gracefully... ', end='')
-        connection.close()
         print('Done.')
 
 if __name__ == '__main__':
