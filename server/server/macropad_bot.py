@@ -25,8 +25,7 @@ class MacroPad(commands.Cog):
     @commands.command()
     async def list(self, ctx):
         """
-        Lists all mp3 clips that are playable. In order to be detected they must be
-        stored in the ASSETS_PATH folder and have the ".mp3" suffix.
+        Lists all the playable audio clips.
         """
         files = [f'**{f.removesuffix(".mp3")}**' for f in listdir(self._assets_path)
                 if isfile(path.join(self._assets_path, f)) and f.endswith('.mp3')]
@@ -35,8 +34,7 @@ class MacroPad(commands.Cog):
     @commands.command()
     async def play(self, ctx, clip: str):
         """
-        Bot command that enables a user to play a target clip using a text message.
-        You have to be in a voice chat to run it.
+        Plays the selected audio clip.
         """
         await self._play_from_source(ctx, clip)
 
@@ -47,11 +45,11 @@ class MacroPad(commands.Cog):
     @commands.command()
     async def join(self, ctx):
         """
-        Bot command that tells the bot to join a voice channel.
-        When that happens this process enstablishes a connection with the message
-        broker in order to receive events.
-        It also creates an ngrok process exposing the message broker with the chat.
+        Ask the bot to join the voice channel.
         """
+        # When that happens this process enstablishes a connection with the message
+        # broker in order to receive events.
+        # It also creates an ngrok process exposing the message broker with the chat.
         channel = ctx.author.voice.channel
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
@@ -84,6 +82,7 @@ class MacroPad(commands.Cog):
             hostname, port = self._get_hostname_and_port(tunnel.public_url)
             logging.info(f'Tunnel with ngrok set up. Check out {tunnel.api_url}')
             await ctx.send(f'To connect run `macropad-client.exe {hostname} {port}`')
+            await ctx.send('For more information ask for *help*.')
             await asyncio.Future()
 
     @commands.command()
