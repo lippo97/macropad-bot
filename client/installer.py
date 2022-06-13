@@ -7,5 +7,7 @@ PyInstaller.__main__.run([
     'client/main.py',
     '--onefile',
     '--paths',
-    path
+    path,
+    '--name',
+    'macropad-client'
 ])
