@@ -4,6 +4,6 @@ services:
     build: .
     env_file:
       - .env
-      - tokens.env
+      - .tokens.env
     network_mode: host
     restart: unless-stopped
