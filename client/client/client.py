@@ -12,9 +12,6 @@ logging.basicConfig(level=LOGLEVEL)
 
 def main(hostname: str, port: int):
     connection = pika.BlockingConnection(pika.ConnectionParameters(hostname, port))
-    channel = connection.channel()
-    channel.exchange_declare(exchange='default',
-                             exchange_type='fanout')
     def send_msg(msg):
         logging.info(f'Sending message: {msg}')
         channel = connection.channel()
