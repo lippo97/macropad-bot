@@ -5,12 +5,14 @@ from discord.ext import commands
 
 from macropad_bot import MacroPad
 
-ASSETS_PATH = 'assets'
+ASSETS_PATH = os.environ.get('ASSETS_PATH')
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 NGROK_TOKEN = os.environ.get('NGROK_TOKEN', '')
 MESSAGE_BROKER_HOSTNAME = os.environ.get('MESSAGE_BROKER_HOSTNAME', 'localhost')
 MESSAGE_BROKER_PORT = int(os.environ.get('MESSAGE_BROKER_PORT', '5672'))
+if ASSETS_PATH is None:
+    raise RuntimeError('ASSETS_PATH should be defined.')
 if DISCORD_TOKEN is None:
     raise RuntimeError('DISCORD_TOKEN should be defined.')
 
