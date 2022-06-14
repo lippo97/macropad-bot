@@ -5,5 +5,9 @@ services:
     env_file:
       - .env
       - .tokens.env
+    environment:
+      - ASSETS_PATH=/assets
+    volumes:
+      - ./assets:/assets
     network_mode: host
     restart: unless-stopped
