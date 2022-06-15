@@ -1,0 +1,30 @@
+#################################################################################
+#                         Istruzioni a prova di bonobo                          #
+#################################################################################
+# Per visualizzare l'elenco delle possibili clip si usa il comando *list*.      #
+# Per esempio:                                                                  #
+# | Lippo: >list                                                                #
+# | Bot: Elenco delle possibili clip:                                           #
+# |      - dio_mio                                                              #
+# |      - elezione                                                             #
+# |      - obitorio                                                             #
+#                                                                               #
+# Si usa questo file associare ciascun pulsante F ad una clip che vi interessa  #
+# riprodurre.                                                                   #
+# Se non volete associare un pulsate con una clip è sufficiente non menzionarlo #
+# (come è stato fatto con i tasti da f1 a f4) oppure associarlo ad un nome      #
+# vuoto ("").                                                                   #
+#                                                                               #
+# Have fun and vibe.                                                            #
+#################################################################################
+
+[keys]
+
+f5 = ""
+f6 = ""
+f7 = "dio_mio"
+f8 = "elezione"
+f9 = "gianluca"
+f10 = "pollo_alle_mandorle"
+f11 = "non_si_fanno_carryare"
+f12 = "obitorio"
