@@ -6,15 +6,15 @@ import asyncio
 import re
 from os import path, listdir
 from os.path import isfile
+from discord.ext.commands.bot import Bot
 from discord.errors import ClientException
 from discord.ext import commands
 from pyngrok import ngrok
 import subprocess
-import clips
 
 
 class MacroPad(commands.Cog):
-    def __init__(self, bot, assets_path: str, ngrok_token: str, message_broker: Tuple[str, int]):
+    def __init__(self, bot: Bot, assets_path: str, ngrok_token: str, message_broker: Tuple[str, int]):
         self.bot = bot
         self._on_chat_leave = None
         self._assets_path = assets_path
@@ -58,8 +58,7 @@ class MacroPad(commands.Cog):
         async def on_message(message):
             async with message.process():
                 msg = message.body.decode('utf-8')
-                clip = clips.default(msg)
-                await self._play_from_source(ctx, clip)
+                await self._parse_message(ctx, msg)
 
         connection = await aio_pika.connect(self._message_broker_url)
         async with connection:
@@ -95,6 +94,13 @@ class MacroPad(commands.Cog):
         ngrok.kill()
         if self._on_chat_leave is not None:
             await self._on_chat_leave()
+
+    async def _parse_message(self, ctx, msg: str) -> None:
+        match msg.split('/'):
+            case ['play', clip]:
+                await self._play_from_source(ctx, clip)
+            case _:
+                logging.warning(f"Received command {msg}, but couldn't match it against any pattern.")
 
     async def _play_from_source(self, ctx, name):
         """
