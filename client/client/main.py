@@ -29,7 +29,8 @@ def get_clip_for_key(key: Key, keybindings: dict[str, str]):
     if key in key_strings:
         key_str = key_strings[key]
         if key_str in keybindings:
-            return keybindings[key_str]
+            clip = keybindings[key_str]
+            return clip if clip != "" else None
     return None
 
 def main(hostname: str, port: int):
