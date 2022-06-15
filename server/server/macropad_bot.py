@@ -18,6 +18,7 @@ class MacroPad(commands.Cog):
     def __init__(self, bot: Bot, assets_path: str, ngrok_token: str, message_broker: Tuple[str, int]):
         self.bot = bot
         self._on_chat_leave = None
+        self._connection_message = None
         self._assets_path = assets_path
         self._ngrok_token = ngrok_token
         self._message_broker_hostname, self._message_broker_port = message_broker
@@ -95,8 +96,9 @@ class MacroPad(commands.Cog):
             tunnel = ngrok.connect(f'{self._message_broker_hostname}:{self._message_broker_port}', 'tcp')
             hostname, port = self._get_hostname_and_port(tunnel.public_url)
             logging.info(f'Tunnel with ngrok set up. Check out {tunnel.api_url}')
-            await ctx.send(f'To connect run `.\\macropad-client.exe {hostname} {port}`')
-            await ctx.send('For more information ask for *help*.')
+            self._connection_message = await ctx.send(f'To connect run `.\\macropad-client.exe {hostname} {port}`')
+
+
             await asyncio.Future()
 
     @commands.command()
@@ -112,6 +114,9 @@ class MacroPad(commands.Cog):
         ngrok.kill()
         if self._on_chat_leave is not None:
             await self._on_chat_leave()
+        if self._connection_message is not None:
+            await self._connection_message.edit(content=f'~~{self._connection_message.content}~~')
+            self._connection_message = None
 
 
     async def _parse_message(self, ctx, msg: str) -> None:
