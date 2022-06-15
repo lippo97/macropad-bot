@@ -6,6 +6,7 @@ import asyncio
 import re
 from os import path, listdir
 from os.path import isfile
+from discord import VoiceState, VoiceClient
 from discord.ext.commands.bot import Bot
 from discord.errors import ClientException
 from discord.ext import commands
@@ -41,6 +42,20 @@ class MacroPad(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'Logged in as {self.bot.user}.')
+
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        channel_ids = [ x.channel.id for x in self.bot.voice_clients ]
+        if before.channel is not None and before.channel.id in channel_ids:
+            before_channel_id = before.channel.id
+            after_channel_id = after.channel.id if after.channel is not None else None
+            if before_channel_id != after_channel_id:
+                voice_client = next(filter(lambda x: x.channel.id == before_channel_id, self.bot.voice_clients))
+                if len(voice_client.channel.members) == 1 and voice_client.channel.members[0].id == self.bot.user.id:
+                    logging.info('No one left in channel, leaving.')
+                    await self._handle_leave(voice_client)
+
 
     @commands.command()
     async def join(self, ctx):
@@ -89,11 +104,15 @@ class MacroPad(commands.Cog):
         """
         It lets the bot leave the chat, closing all pending connections.
         """
-        if ctx.voice_client is not None:
-            await ctx.voice_client.disconnect()
+        await self._handle_leave(ctx.voice_client)
+
+    async def _handle_leave(self, voice_client: VoiceClient):
+        if voice_client is not None:
+            await voice_client.disconnect()
         ngrok.kill()
         if self._on_chat_leave is not None:
             await self._on_chat_leave()
+
 
     async def _parse_message(self, ctx, msg: str) -> None:
         match msg.split('/'):
