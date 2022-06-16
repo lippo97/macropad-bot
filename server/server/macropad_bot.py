@@ -4,7 +4,7 @@ import discord
 import aio_pika
 import asyncio
 import re
-from os import path, listdir
+from os import name, path, listdir
 from os.path import isfile
 from discord import VoiceState, VoiceClient
 from discord.ext.commands.bot import Bot, Context
@@ -43,7 +43,7 @@ class MacroPad(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'Logged in as {self.bot.user}.')
-
+        await self._set_idle_activity()
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -105,6 +105,7 @@ class MacroPad(commands.Cog):
             hostname, port = self._get_hostname_and_port(tunnel.public_url)
             logging.info(f'Tunnel with ngrok set up. Check out {tunnel.api_url}')
             self._connection_message = await ctx.send(f'Per connetterti apri una PowerShell e lancia il seguente comando `.\\macropad-client.exe {hostname} {port}`')
+            await self.bot.change_presence(status=discord.Status.online)
             await asyncio.Future()
 
     @commands.command()
@@ -123,7 +124,11 @@ class MacroPad(commands.Cog):
         if self._connection_message is not None:
             await self._connection_message.edit(content=f'~~{self._connection_message.content}~~')
             self._connection_message = None
+        await self._set_idle_activity()
 
+    async def _set_idle_activity(self):
+        activity = discord.Activity(type=discord.ActivityType.watching, name="Brizz94")
+        await self.bot.change_presence(status=discord.Status.idle, activity=activity)
 
     async def _parse_message(self, ctx, msg: str) -> None:
         match msg.split('/'):
