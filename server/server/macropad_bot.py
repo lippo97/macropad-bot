@@ -7,7 +7,7 @@ import re
 from os import path, listdir
 from os.path import isfile
 from discord import VoiceState, VoiceClient
-from discord.ext.commands.bot import Bot
+from discord.ext.commands.bot import Bot, Context
 from discord.errors import ClientException
 from discord.ext import commands
 from pyngrok import ngrok
@@ -31,7 +31,7 @@ class MacroPad(commands.Cog):
         """
         files = [f'**{f.removesuffix(".mp3")}**' for f in listdir(self._assets_path)
                 if isfile(path.join(self._assets_path, f)) and f.endswith('.mp3')]
-        await ctx.send('Available sounds are: \n{}'.format("\n".join(files)))
+        await ctx.send("L'elenco dei suoni disponibili è il seguente: \n{}".format("\n".join(files)))
 
     @commands.command()
     async def play(self, ctx, clip: str):
@@ -57,15 +57,23 @@ class MacroPad(commands.Cog):
                     logging.info('No one left in channel, leaving.')
                     await self._handle_leave(voice_client)
 
+    @commands.command()
+    async def client(self, ctx: Context):
+        """
+        Restituisce l'ultima versione del macropad-client.
+        """
+        await ctx.reply(file=discord.File(path.join(self._assets_path, "macropad-client.zip")))
 
     @commands.command()
     async def join(self, ctx):
         """
-        Ask the bot to join the voice channel.
+        Chiedi al bot di partecipare alla tua chat vocale.
         """
         # When that happens this process enstablishes a connection with the message
         # broker in order to receive events.
         # It also creates an ngrok process exposing the message broker with the chat.
+        if ctx.author.voice is None:
+            return await ctx.reply("Devi essere in un canale vocale.")
         channel = ctx.author.voice.channel
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
@@ -96,15 +104,13 @@ class MacroPad(commands.Cog):
             tunnel = ngrok.connect(f'{self._message_broker_hostname}:{self._message_broker_port}', 'tcp')
             hostname, port = self._get_hostname_and_port(tunnel.public_url)
             logging.info(f'Tunnel with ngrok set up. Check out {tunnel.api_url}')
-            self._connection_message = await ctx.send(f'To connect run `.\\macropad-client.exe {hostname} {port}`')
-
-
+            self._connection_message = await ctx.send(f'Per connetterti apri una PowerShell e lancia il seguente comando `.\\macropad-client.exe {hostname} {port}`')
             await asyncio.Future()
 
     @commands.command()
     async def leave(self, ctx):
         """
-        It lets the bot leave the chat, closing all pending connections.
+        Chiedi al bot di uscire dalla chat vocale.
         """
         await self._handle_leave(ctx.voice_client)
 
@@ -136,7 +142,7 @@ class MacroPad(commands.Cog):
             ctx.voice_client.play(source)
         except subprocess.CalledProcessError:
             logging.warning(f"Requested clip not found: {name}; path: {file}")
-            ctx.send(f"Couldn't find clip named {name}.")
+            ctx.reply(f"Non ho trovato nessuna clip chiamata {name}.")
         except ClientException:
             logging.warning('Bot was already playing some audio.')
 
