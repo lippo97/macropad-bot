@@ -4,9 +4,9 @@ import discord
 import aio_pika
 import asyncio
 import re
-from os import name, path, listdir
+from os import path, listdir
 from os.path import isfile
-from discord import VoiceState, VoiceClient
+from discord import VoiceClient
 from discord.ext.commands.bot import Bot, Context
 from discord.errors import ClientException
 from discord.ext import commands

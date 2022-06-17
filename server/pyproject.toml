@@ -9,6 +9,7 @@ python = "^3.10"
 "discord.py" = {extras = ["voice"], version = "^1.7.3"}
 aio-pika = "^7.2.0"
 pyngrok = "^5.1.0"
+ffmpeg-python = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

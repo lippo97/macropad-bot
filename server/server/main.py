@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 
 from macropad_bot import MacroPad
+from upload import Upload
 
 ASSETS_PATH = os.environ.get('ASSETS_PATH')
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
@@ -27,4 +28,6 @@ bot.add_cog(MacroPad(bot,
                      ngrok_token=NGROK_TOKEN,
                      message_broker=(MESSAGE_BROKER_HOSTNAME, MESSAGE_BROKER_PORT)
                      ))
+bot.add_cog(Upload(bot,
+                   assets_path=ASSETS_PATH))
 bot.run(DISCORD_TOKEN)
