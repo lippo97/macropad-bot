@@ -1,11 +1,11 @@
-import sys
 import os
 import logging
+from typing import Optional
 import typer
 import rabbitpy
 import toml
 from pynput import keyboard
-from pynput.keyboard import Key, KeyCode
+from pynput.keyboard import Key
 
 LOGLEVEL = os.environ.get('LOGLEVEL', 'WARNING').upper()
 logging.basicConfig(level=LOGLEVEL)
@@ -33,10 +33,17 @@ def get_clip_for_key(key: Key, keybindings: dict[str, str]):
             return clip if clip != "" else None
     return None
 
-def main(hostname: str, port: int):
+def main(hostname: str,
+         port: int,
+         username: Optional[str]=typer.Argument(None),
+         password: Optional[str]=typer.Argument(None)):
     keybindings = toml.load('keys.toml')['keys']
 
-    with rabbitpy.Connection(f'amqp://{hostname}:{port}') as conn:
+    username = username or 'guest'
+    password = password or 'guest'
+    connection_string = f'amqp://{username}:{password}@{hostname}:{port}'
+
+    with rabbitpy.Connection(connection_string) as conn:
         with conn.channel() as channel:
             default_exchange = rabbitpy.FanoutExchange(channel, 'default')
             default_exchange.declare()
