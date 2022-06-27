@@ -31,6 +31,7 @@ class MacroPad(commands.Cog):
         """
         files = [f'**{f.removesuffix(".mp3")}**' for f in listdir(self._assets_path)
                 if isfile(path.join(self._assets_path, f)) and f.endswith('.mp3')]
+        files = files.sort()
         await ctx.send("L'elenco dei suoni disponibili è il seguente: \n{}".format("\n".join(files)))
 
     @commands.command()

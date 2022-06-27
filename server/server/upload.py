@@ -56,6 +56,8 @@ class Upload(commands.Cog):
 
     @commands.command()
     async def rename(self, ctx, source: str, dest: str):
+        if not self._check_name(dest):
+            return await ctx.reply('Il nome deve contenere solo lettere minuscole, numeri e underscore.')
         source_path = self._make_path(source)
         dest_path = self._make_path(dest)
         if not os.path.exists(source_path):
