@@ -24,8 +24,8 @@ class Upload(commands.Cog):
         if os.path.exists(filepath):
             return await ctx.reply(f'Esiste già una clip nominata **{name}**.')
         attachment = ctx.message.attachments[0]
-        if attachment.size > 2 * (10**6):
-            return await ctx.reply('La dimensione massima della clip è di 2MB.')
+        if attachment.size > 5 * (10**6):
+            return await ctx.reply('La dimensione massima della clip è di 5MB.')
         if attachment.content_type == 'audio/mpeg':
             await attachment.save(self._make_path(name))
             await ctx.reply(self._success_gif)
@@ -71,5 +71,5 @@ class Upload(commands.Cog):
 
     def _check_name(self, name: str) -> bool:
         import re
-        pattern = '^[a-z0-9]+(_[a-z0-9]+)*$'
+        pattern = '^[a-z0-9]+(_[a-z0-9]+)*(/[a-z0-9]+(_[a-z0-9]+)*)*$'
         return re.match(pattern, name) != None
