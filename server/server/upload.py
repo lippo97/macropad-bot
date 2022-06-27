@@ -73,5 +73,5 @@ class Upload(commands.Cog):
 
     def _check_name(self, name: str) -> bool:
         import re
-        pattern = '^[a-z0-9]+(_[a-z0-9]+)*(/[a-z0-9]+(_[a-z0-9]+)*)*$'
+        pattern = '^[a-z0-9]+(_[a-z0-9]+)*(\\.[a-z0-9]+(_[a-z0-9]+)*)*$'
         return re.match(pattern, name) != None
