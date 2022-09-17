@@ -2,12 +2,16 @@ version: "3.2"
 services:
   macropad:
     build: .
-    env_file:
-      - .env
-      - .tokens.env
     environment:
       - ASSETS_PATH=/assets
+      - MESSAGE_BROKER_HOSTNAME=rabbitmq
+      - MESSAGE_BROKER_PORT=5672
     volumes:
-      - ./assets:/assets
-    network_mode: host
+      - /home/pi/assets:/assets
+    networks:
+      - rabbitmq_default
     restart: unless-stopped
+
+networks:
+  rabbitmq_default:
+    external: true
