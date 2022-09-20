@@ -6,6 +6,8 @@ services:
       - ASSETS_PATH=/assets
       - MESSAGE_BROKER_HOSTNAME=rabbitmq
       - MESSAGE_BROKER_PORT=5672
+      - DISCORD_TOKEN=$DISCORD_TOKEN
+      - NGROK_TOKEN=$NGROK_TOKEN
     volumes:
       - /home/pi/assets:/assets
     networks:
