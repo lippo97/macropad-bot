@@ -11,8 +11,12 @@ ENV PYTHONFAULTHANDLER=1 \
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y build-essential libssl-dev libffi-dev \
-                       python3-dev cargo \
+                       python3-dev \
                        ffmpeg
+RUN apt-get install -y curl
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 RUN pip install "poetry==$POETRY_VERSION"
 
